@@ -1,0 +1,3 @@
+KERNELS=="1-4:1.0",  MODE:="0666", GROUP:="dialout", SYMLINK+="mav_1"
+KERNELS=="1-1:1.0",  MODE:="0666", GROUP:="dialout", SYMLINK+="imu_1"
+KERNELS=="1-2:1.0",  MODE:="0666", GROUP:="dialout", SYMLINK+="rplidar_1"

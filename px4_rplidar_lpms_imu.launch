@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+   <launch>
+
+      <!-- Rplidar Node /-->
+      <node name="rplidarNode"            pkg="rplidar_ros"  type="rplidarNode" output="screen">
+        <param name="serial_port"         type="string" value="/dev/rplidar_1"/>
+        <param name="serial_baudrate"     type="int"    value="115200"/><!--A1/A2 -->
+        <!--param name="serial_baudrate"  type="int"    value="256000"--><!--A3 -->
+        <param name="frame_id"            type="string" value="laser"/>
+        <param name="inverted"            type="bool"   value="false"/>
+        <param name="angle_compensate"    type="bool"   value="true"/>
+      </node>
+
+      <!-- IMU Node /-->
+      <node name="lpms_imu_node"        pkg="lpms_imu"   type="lpms_imu_node" output="screen">
+        <param name="sensor_model"      type="string"    value="DEVICE_LPMS_RS232"/>
+        <param name="port"              type="string"    value="/dev/imu_1"/>
+        <param name="frame_id"          type="string"    value="laser"/>
+        <param name="rate"              type="int"       value="200"/>
+      </node>
+
+      <!-- Px4 MAVROS Node -->
+      <!-- vim: set ft=xml noet : -->
+      <!-- example launch script for PX4 based FCU's -->
+
+      <arg name="fcu_url" default="/dev/mav_1:500000" />
+      <arg name="gcs_url" default="" />
+      <arg name="tgt_system" default="1" />
+      <arg name="tgt_component" default="1" />
+      <arg name="log_output" default="screen" />
+      <arg name="fcu_protocol" default="v2.0" />
+      <arg name="respawn_mavros" default="false" />
+
+      <include file="/home/ghost/catkin_ws/src/cartographer_px4/node.launch">
+          <arg name="pluginlists_yaml" value="/home/ghost/catkin_ws/src/cartographer_px4/px4_pluginlists.yaml" />
+          <arg name="config_yaml" value="/home/ghost/catkin_ws/src/cartographer_px4/px4_config.yaml" />
+
+          <arg name="fcu_url" value="$(arg fcu_url)" />
+          <arg name="gcs_url" value="$(arg gcs_url)" />
+          <arg name="tgt_system" value="$(arg tgt_system)" />
+          <arg name="tgt_component" value="$(arg tgt_component)" />
+          <arg name="log_output" value="$(arg log_output)" />
+          <arg name="fcu_protocol" value="$(arg fcu_protocol)" />
+          <arg name="respawn_mavros" default="$(arg respawn_mavros)" />
+      </include>
+
+      <param name="/use_sim_time" value="false" />
+      <node name="cartographer_node"
+            pkg="cartographer_ros"
+            type="cartographer_node"
+            args="-configuration_directory /home/ghost/catkin_ws/src/cartographer_px4/config_files/ -configuration_basename rplidar_demo_lpms_imu.lua"
+            output="screen">
+      </node>
+      <node name="cartographer_occupancy_grid_node"
+            pkg="cartographer_ros"
+            type="cartographer_occupancy_grid_node" />
+      <node name="robot_pose_publisher"    pkg="robot_pose_publisher" type="robot_pose_publisher" respawn="true" output="screen" >
+          <param name ="is_stamped"        value = "true" />
+          <param name ="publish_frequency" value = "20" />
+          <remap from="/robot_pose"        to="/mavros/vision_pose/pose"/> 
+      </node>
+
+
+      <node name="rviz" pkg="rviz" type="rviz" required="true"
+            args="-d $(find cartographer_ros)/configuration_files/demo_2d.rviz" />
+
+      <node pkg="tf" type="static_transform_publisher" name="base_to_laser_broadcaster" args="0 0 0 0 0 0 base_link laser 100" />
+   </launch>

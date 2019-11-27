@@ -3,7 +3,7 @@
 
       <!-- Rplidar Node /-->
       <node name="rplidarNode"          pkg="rplidar_ros"  type="rplidarNode" output="screen">
-        <param name="serial_port"         type="string" value="/dev/ttyUSB0"/>
+        <param name="serial_port"         type="string" value="/dev/rplidar_1"/>
         <param name="serial_baudrate"     type="int"    value="115200"/><!--A1/A2 -->
         <!--param name="serial_baudrate"     type="int"    value="256000"--><!--A3 -->
         <param name="frame_id"            type="string" value="laser"/>
@@ -14,9 +14,9 @@
       <!-- IMU Node /-->
       <node name="lpms_imu_node"          pkg="lpms_imu"  type="lpms_imu_node" output="screen">
         <param name="sensor_model"      type="string"    value="DEVICE_LPMS_RS232"/>
-        <param name="port"              type="string"    value="/dev/ttyUSB1"/>
-        <param name="frame_id"         type="string"     value="laser"/>
-        <param name="rate"             type="int"        value="200"/>
+        <param name="port"              type="string"    value="/dev/imu_1"/>
+        <param name="frame_id"          type="string"    value="laser"/>
+        <param name="rate"              type="int"       value="200"/>
       </node>
 
       <param name="/use_sim_time" value="false" />
