@@ -57,9 +57,17 @@
       <node name="robot_pose_publisher"    pkg="robot_pose_publisher" type="robot_pose_publisher" respawn="true" output="screen" >
           <param name ="is_stamped"        value = "true" />
           <param name ="publish_frequency" value = "20" />
-          <remap from="/robot_pose"        to="/mavros/vision_pose/pose"/> 
+          
+          <!-- NO NEED, a new node is built for this -->
+          <!--remap from="/robot_pose"        to="/mavros/vision_pose/pose"/--> 
       </node>
 
+      <node name="robot_pose_integrator"  pkg="cartographer_px4"   type="robot_pose_integrator" output="screen">
+        <param name="is_publish_tf"       type="int"               value="0"/>
+        <param name="is_integrate_imu"    type="int"               value="1"/>
+        <param name="self_frame"          type="string"            value="odom"/>
+        <param name="child_frame"         type="string"            value="vision_estimate"/>
+      </node>
 
       <node name="rviz" pkg="rviz" type="rviz" required="true"
             args="-d $(find cartographer_ros)/configuration_files/demo_2d.rviz" />
